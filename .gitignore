@@ -1,0 +1,9 @@
+# 1️⃣ 忽略整个 result/ 文件夹（及其所有内容）
+result/
+
+# 2️⃣ 忽略 datasets/ 文件夹下的所有文件与子文件夹
+datasets/**
+
+#（可选）如果你想保留 datasets/ 目录本身（例如放置 .gitkeep 文件），请在
+# 目录中添加 .gitkeep 并在 .gitignore 里排除它：
+# !datasets/.gitkeep
