@@ -1,7 +1,5 @@
 #!/bin/bash
 
-# 该文件不能同时运行多个
-
 # Directory containing .pth files
 PTH_DIR="./result/MissFormer/ACDC/Pth"
 # Directory to save logs

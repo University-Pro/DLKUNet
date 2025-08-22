@@ -1,5 +1,5 @@
 """
-ACDC数据集的测试代码
+ACDC test code
 """
 import numpy as np
 import torch
@@ -12,40 +12,27 @@ import torch.nn.functional as F
 import SimpleITK as sitk
 import os
 
-# 设置可见GPU
 os.environ["CUDA_VISIBLE_DEVICES"] = "0"
 
 from tqdm import tqdm
-from torch.utils.tensorboard import SummaryWriter # 启用Tensorboard
-import logging # 日志系统
+from torch.utils.tensorboard import SummaryWriter
+import logging
 import argparse
 from glob import glob
 
-# 导入数据集
 from DataLoader_ACDC import ACDCdataset
 from DataLoader_ACDC import RandomGenerator
 
 # 导入网络
-# from network.LKA_Source import UNet
-# from network.DDL_Rewrite import Network
-# from network.DDL_Source import UNet
-# from network.DDL_Source_2Layer import UNet
-# from network.DDL_Source_3Layer import UNet
-# from network.DDL_Source_64channel import UNet
-# from network.DDL_Source_128channel import UNet
-# from network.Unet2D import UNet
-# from network.ULite_ACDC import ULite
-from network.MissFormer.MISSFormer import MISSFormer
+from network.DLKUNet import UNet
 
 def set_seed(seed_value=42):
-    """设置随机种子以确保结果可复现"""
     torch.manual_seed(seed_value)
     torch.cuda.manual_seed_all(seed_value)
     torch.backends.cudnn.deterministic = True
     np.random.seed(seed_value)
 
 def setup_logging(log_file):
-    """日志记录"""
     logging.basicConfig(level=logging.INFO,
                         format='%(asctime)s - %(levelname)s - %(message)s',
                         datefmt='%Y-%m-%d %H:%M:%S',
@@ -54,7 +41,6 @@ def setup_logging(log_file):
 
 # 查找最新的文件
 def latest_checkpoint(path):
-    """查找path中最新的文件"""
     list_of_files = glob(os.path.join(path, '*.pth'))
     if not list_of_files:
         return None
@@ -100,16 +86,12 @@ class DiceLoss(nn.Module):
         return loss / self.n_classes
 
 def DiceLoss_test():
-    # 创建模拟数据
     n_classes = 9
     dice_loss = DiceLoss(n_classes)
 
-    # 模拟的输入和目标
-    # 假设 batch_size = 1, height = width = 2, n_classes = 2
     inputs = torch.randn(1, n_classes, 2, 2)  # 模拟网络输出
     target = torch.randint(0, n_classes, (1, 2, 2))  # 模拟目标标签
 
-    # 计算 Dice Loss
     loss = dice_loss(inputs, target)
     print(loss)
     print(loss.item())
@@ -265,14 +247,10 @@ if __name__=='__main__':
 
 
     # 创建模型实例
-    # model = ULite().to(device=device)
-    # model = UNet(n_channels=1, n_classes=4).to(device)
-    # model = Network(in_channel=1,out_channel=96,final_channel=4).to(device=device)
-    model = MISSFormer(num_classes=4).to(device=device)
+    model = UNet(n_channels=1, n_classes=4).to(device)
 
     # 加载权重
-    # model.load_state_dict(torch.load(option.model_load, map_location=device))
-    model = load_model(model, option.model_load, device) # 新版本,自动处理单卡和多卡模型
+    model = load_model(model, option.model_load, device)
 
 
     logging.info(f"Model loaded from {option.model_load}")

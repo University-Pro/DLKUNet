@@ -15,15 +15,11 @@ class DWConv(nn.Module):
         x = self.pointwise(x)
         return x
 
-# LKA变形卷积，输入的不是3维图像也可以尝试使用
 class LKA(nn.Module):
     def __init__(self, dim):
         super().__init__()
-        # 深度卷积
         self.conv0 = nn.Conv2d(dim, dim, 5, padding=2, groups=dim)
-        # 深度空洞卷积
         self.conv_spatial = nn.Conv2d(dim, dim, 7, stride=1, padding=9, groups=dim, dilation=3)
-        # 逐点卷积
         self.conv1 = nn.Conv2d(dim, dim, 1)
 
     def forward(self, x):
@@ -32,7 +28,6 @@ class LKA(nn.Module):
         attn = self.conv_spatial(attn)
         attn = self.conv1(attn)
 
-        # 注意力操作
         return u * attn
 
 class DoubleConv(nn.Module):
@@ -81,14 +76,12 @@ class Up(nn.Module):
     def forward(self, x1, x2):
         x1 = self.up(x1)
 
-        # 适配尺寸
         diffY = x2.size()[2] - x1.size()[2]
         diffX = x2.size()[3] - x1.size()[3]
 
         x1 = F.pad(x1, [diffX // 2, diffX - diffX // 2,
                         diffY // 2, diffY - diffY // 2])
         
-        # 合并上采样的特征图和跳跃连接的特征图
         x = torch.cat([x2, x1], dim=1)
         return self.conv(x)
 
@@ -110,11 +103,11 @@ class UNet(nn.Module):
         self.inc = DoubleConv(n_channels, 96)
         self.down1 = Down(96, 192)
         self.down2 = Down(192, 384)
-        self.down3 = Down(384, 768)  # 删除了原来的down4层
+        self.down3 = Down(384, 768) 
 
-        self.up1 = Up(768, 384)      # 调整上采样层的输入通道数
-        self.up2 = Up(384, 192)      # 384 (来自up1) + 192 (来自down2)
-        self.up3 = Up(192, 96)       # 192 (来自up2) + 96 (来自down1)
+        self.up1 = Up(768, 384)      
+        self.up2 = Up(384, 192)      
+        self.up3 = Up(192, 96)       
 
         self.outc = OutConv(96, n_classes)
 
@@ -131,8 +124,6 @@ class UNet(nn.Module):
         return logits
 
 if __name__ == "__main__":
-
-    # 检查加速功能是否可用
     if torch.cuda.is_available():
         device = torch.device("cuda")
         print("Using GPU:", torch.cuda.get_device_name(0))
@@ -140,7 +131,6 @@ if __name__ == "__main__":
         device = torch.device("cpu")
         print("Using CPU")
 
-    # 初始化模型并将其移动到 GPU（如果可用）
     model = UNet(n_channels=1, n_classes=9, use_LKA=False).to(device)
     input_tensor = torch.randn(3, 1, 224, 224).to(device)
     print("Input shape:", input_tensor.shape)

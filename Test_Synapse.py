@@ -1,6 +1,5 @@
 """
-Synapse的测试代码
-不保存测试的图片
+Synapse dataset testing code
 """
 import numpy as np
 import torch
@@ -14,31 +13,21 @@ import SimpleITK as sitk
 import os
 import random
 
-# 设置可见GPU
 os.environ["CUDA_VISIBLE_DEVICES"] = "0"
 
 from tqdm import tqdm
-from torch.utils.tensorboard import SummaryWriter # 启用Tensorboard
-import logging # 日志系统
+from torch.utils.tensorboard import SummaryWriter
+import logging
 import argparse
 from glob import glob
 
-# 导入Dataloader
 from DataLoader_Synapse import Synapse_dataset
 from DataLoader_Synapse import RandomGenerator
 
 # 导入网络
-# from network.MissFormer.MISSFormer import MISSFormer
-# from network.ULite import ULite
-# from network.DDL_Rewrite import Network
-# from network.DDL_Source import UNet
-from network.Unet2D import UNet
-# from network.DDL_Source_3Layer import UNet
-# from network.LKA_Source import UNet
-# from network.DDL_Source_64channel import UNet
+from network.DLKUNet import UNet
 
 def set_seed(seed_value=42):
-    """设置随机种子以确保结果可复现"""
     random.seed(seed_value)
     np.random.seed(seed_value)
     torch.manual_seed(seed_value)
@@ -47,9 +36,7 @@ def set_seed(seed_value=42):
     torch.backends.cudnn.benchmark = False
 
 def setup_logging(log_file):
-    """日志记录"""
     log_dir = os.path.dirname(log_file)
-    # 如果日志文件夹没有，就创建文件夹
     if not os.path.exists(log_dir):
         os.makedirs(log_dir)
         
@@ -59,18 +46,15 @@ def setup_logging(log_file):
                         handlers=[logging.FileHandler(log_file, mode='a'),
                                   logging.StreamHandler()])
     
-    # 测试日志记录器是否正常工作
     logging.info("Logging is set up.")
 
 def latest_checkpoint(path):
-    """查找path中最新的文件"""
     list_of_files = glob(os.path.join(path, '*.pth'))
     if not list_of_files:
         return None
     latest_file = max(list_of_files, key=os.path.getctime)
     return latest_file
 
-# DiceLoss计算
 class DiceLoss(nn.Module):
     def __init__(self, n_classes):
         super(DiceLoss, self).__init__()
@@ -122,13 +106,10 @@ def calculate_metric_percase(pred, gt):
         return 0, 0
 
 def test_single_volume(image, label, net, classes, patch_size=[512, 512], test_save_path=None, case=None, z_spacing=1):
-    # 检查 GPU 是否可用
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     
-    # 读取图像内容并传输到GPU
     image, label = image.squeeze(0).to(device), label.squeeze(0).to(device)
     
-    # 如果是3维
     if len(image.shape) == 3:
         prediction = torch.zeros_like(label)
         for ind in range(image.shape[0]):
@@ -155,7 +136,6 @@ def test_single_volume(image, label, net, classes, patch_size=[512, 512], test_s
             out = torch.argmax(torch.softmax(net(input), dim=1), dim=1).squeeze(0)
             prediction = out
     
-    # 将预测结果从GPU传输回CPU
     prediction = prediction.cpu().numpy()
     label = label.cpu().numpy()
     
@@ -176,7 +156,6 @@ def test_single_volume(image, label, net, classes, patch_size=[512, 512], test_s
 
     return metric_list
 
-# 模型加载设置，既支持多卡也支持单卡
 def load_model(model, model_path, device):
     state_dict = torch.load(model_path, map_location=device)
     
@@ -192,16 +171,13 @@ def load_model(model, model_path, device):
     
     return model
 
-# 接口
 def inference(model, test_save_path=None, log_path=None, patch_size=None):
     logging.info("Starting inference process")
 
-    # 测试的时候不需要进行打乱，num_workers最好设置成1
     db_test = Synapse_dataset(base_dir="./datasets/Synapse/data", list_dir="./datasets/Synapse/list", split="test")
     testloader = DataLoader(db_test, batch_size=1, shuffle=False, num_workers=1)
     logging.info("{} test iterations per epoch".format(len(testloader)))
     
-    # 模型进入评估模式，不进行梯度传播
     model.eval()
     metric_list = 0.0
 
@@ -223,7 +199,6 @@ def inference(model, test_save_path=None, log_path=None, patch_size=None):
     logging.info('Testing Finished')
 
 if __name__=='__main__':
-    # 参数设计
     parser = argparse.ArgumentParser(description='Test a deep learning model on a given dataset and savecheckpoint')
     parser.add_argument("--model_load",type=str,default='./result/Pth/model_epoch_10_checkpoint.pth',help='The path of the checkpoint')
     parser.add_argument("--log_path",type=str,default='./result/Test/running.log',help='The path of the log')
@@ -232,27 +207,17 @@ if __name__=='__main__':
     
     option = parser.parse_args()
     
-    # 设定日志位置
     setup_logging(option.log_path)
     logging.info(f"log file will be setted at {option.log_path}")
 
-    # 记录运行的参数
     logging.info(f"Running with parameters: {vars(option)}")
 
-    # 检查GPU是否可用
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     logging.info(f"Now is Going to use {device.type}: {torch.cuda.get_device_name(0) if device.type == 'cuda' else 'CPU'}")
 
-    # 创建模型实例
-    # model = MISSFormer(num_classes=9).to(device=device)
     model = UNet(n_channels=1, n_classes=9).to(device) # UNetLKA4 / UNetLKA5
-    # model = ULite().to(device=device)
-    # model = Network(in_channel=1,out_channel=96,final_channel=9).to(device=device)
 
-    # 模型加载到设备上
-    # model.load_state_dict(torch.load(option.model_load, map_location=device))
     model = load_model(model, option.model_load, device) # 新版本,自动处理单卡和多卡模型
     logging.info(f"Model loaded from {option.model_load}")
 
-    # 调用你的测试函数
     inference(model, test_save_path=option.test_save_path,log_path=option.log_path,patch_size=option.patch_size)

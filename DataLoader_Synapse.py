@@ -1,5 +1,5 @@
 """
-Synapse的dataloader
+Synapse dataloader
 """
 import os
 import random
@@ -62,14 +62,12 @@ class Synapse_dataset(Dataset):
     def __getitem__(self, idx):
         if self.split == "train":
             slice_name = self.sample_list[idx].strip('\n')
-            # data_path = os.path.join(self.data_dir, slice_name+'.npz')
             data_path = os.path.join(self.data_dir, "train", slice_name+'.npz')
             data = np.load(data_path)
             image, label = data['image'], data['label']
 
         else:
             vol_name = self.sample_list[idx].strip('\n')
-            #filepath = self.data_dir + "/{}.npy.h5".format(vol_name)
             filepath = os.path.join(self.data_dir, "test", "{}.npy.h5".format(vol_name))
             data = h5py.File(filepath)
             image, label = data['image'][:], data['label'][:]
@@ -84,11 +82,12 @@ if __name__=="__main__":
     # 测试用例
     transform = RandomGenerator((512, 512))
     
-    db_train = Synapse_dataset(base_dir="./datasets/Synapse/data", list_dir="./datasets/Synapse/list", split="train")# 可选train和test
+    db_train = Synapse_dataset(base_dir="./datasets/Synapse/data", 
+                               list_dir="./datasets/Synapse/list", 
+                               split="train") # train or test
     print("The length of train set is: {}".format(len(db_train)))
     
     sample = db_train[2]
-    # 打印图像和标签的形状
 
     print("Shape of the Sample: ", sample)
     print("Shape of the image: ", sample['image'].shape)

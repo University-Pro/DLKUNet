@@ -1,5 +1,5 @@
 """
-ACDC的DataLoader
+ACDC dataloader
 """
 import os
 import random
@@ -27,7 +27,6 @@ def random_rotate(image, label):
     label = ndimage.rotate(label, angle, order=0, reshape=False)
     return image, label
 
-# 增强鲁棒性的图片旋转操作
 class RandomGenerator(object):
     def __init__(self, output_size):
         self.output_size = output_size
@@ -48,7 +47,6 @@ class RandomGenerator(object):
         sample = {'image': image, 'label': label.long()}
         return sample
 
-# 数据集类
 class ACDCdataset(Dataset):
     def __init__(self, base_dir, list_dir, split, transform=None):
         self.transform = transform
@@ -67,7 +65,7 @@ class ACDCdataset(Dataset):
             image, label = data['img'], data['label']
         else:
             vol_name = self.sample_list[idx].strip('\n')
-            filepath = self.data_dir + "/test" +"/{}".format(vol_name) # 添加了test字段
+            filepath = self.data_dir + "/test" +"/{}".format(vol_name)
             data = np.load(filepath)
             image, label = data['img'], data['label']
 
@@ -78,12 +76,13 @@ class ACDCdataset(Dataset):
         return sample
     
 if __name__ == "__main__":
-    train_dataset = ACDCdataset(base_dir="./datasets/ACDC", list_dir="./datasets/ACDC/lists_ACDC", split="train", transform=
-                                   transforms.Compose(
+    train_dataset = ACDCdataset(base_dir="./datasets/ACDC", 
+                                list_dir="./datasets/ACDC/lists_ACDC", 
+                                split="train", 
+                                transform=transforms.Compose(
                                    [RandomGenerator(output_size=[256, 256])]))
     print("The length of train set is: {}".format(len(train_dataset)))
     sample = train_dataset[2]
-    # 打印图像和标签的形状
 
     print("Sample: ", sample)
     print("Shape of the image: ", sample['image'].shape)
