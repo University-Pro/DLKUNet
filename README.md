@@ -5,6 +5,8 @@
 
 Accurate multi-organ segmentation is crucial in computer-aided diagnosis, surgical navigation, and radiotherapy. This repository provides the official implementation of **DLKUNet**, a lightweight and efficient deep learning framework for medical image segmentation.
 
+Attention: this repository is still building and maybe miss some files, we will upload more essential file in future.
+
 ---
 
 ## 🔥 Highlights
@@ -35,11 +37,16 @@ These results demonstrate DLKUNet’s superior balance of **accuracy, efficiency
 
 ```
 DLKUNet/
-├── models/           # Network architectures (DLKUNet-S, M, L)
-├── datasets/         # Data loading scripts (Synapse, ACDC)
-├── train.py          # Training script
-├── test.py           # Testing & evaluation script
-├── utils/            # Helper functions
+├── network/           # Network architectures
+├── datasets/         # put ACDC and Synapse data into this folder
+├── Dataloader_ACDC          # Dataloader of ACDC
+├── Dataloader_Synapse  # Dataloader of Synapse
+├── LogProcess.py   # Logging process file 
+├── requirements.txt  # pypi file
+├── Test_ACDC.py           # Test ACDC dataset
+├── Test_Synapse.py        # Test Synapse dataset
+├── Train_ACDC.py      # Train ACDC dataset
+├── Train_Synpase.py    # Train Synapse dataset
 └── README.md         # Project description
 ```
 
@@ -57,8 +64,8 @@ cd DLKUNet
 ### 2. Create Environment
 
 ```bash
-conda create -n dlkunet python=3.8 -y
-conda activate dlkunet
+conda create -n torch-env python=3.12
+conda activate torch-env
 pip install -r requirements.txt
 ```
 
@@ -67,18 +74,16 @@ pip install -r requirements.txt
 * **Synapse**: Download from [official Synapse website](https://www.synapse.org/).
 * **ACDC**: Download from [ACDC challenge](https://www.creatis.insa-lyon.fr/Challenge/acdc/).
 
-Update the dataset paths in `config/` before training.
-
 ### 4. Train
 
 ```bash
-python train.py --dataset Synapse --model DLKUNet-L --output ./results/synapse
+python Train_Synapse.py
 ```
 
 ### 5. Test
 
 ```bash
-python test.py --dataset ACDC --model DLKUNet-S --checkpoint ./checkpoints/dlkunet_s.pth
+python Test_Synapse.py
 ```
 
 ---
