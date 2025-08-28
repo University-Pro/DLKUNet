@@ -52,6 +52,27 @@ DLKUNet/
 
 ---
 
+## 🖼️ Prepare Datasets
+
+### 1. ACDC datasets
+You can download the dataset from the Automated Cardiac Diagnosis Challenge(ACDC) offical website or other paper's repositories.
+
+```bash
+https://www.creatis.insa-lyon.fr/Challenge/acdc/databases.html
+```
+
+after download, put the data into ./datasets/ACDC folder.
+
+### 2. Synapse dataset
+
+You can download the dataset from the offical website or other paper's repositories.
+
+```bash
+
+```
+
+after download, put the data into ./datasets/Synapse folder.
+
 ## 🚀 Getting Started
 
 ### 1. Clone Repository
@@ -69,18 +90,13 @@ conda activate torch-env
 pip install -r requirements.txt
 ```
 
-### 3. Dataset Preparation
-
-* **Synapse**: Download from [official Synapse website](https://www.synapse.org/).
-* **ACDC**: Download from [ACDC challenge](https://www.creatis.insa-lyon.fr/Challenge/acdc/).
-
-### 4. Train
+### 3. Train
 
 ```bash
 python Train_Synapse.py
 ```
 
-### 5. Test
+### 4. Test
 
 ```bash
 python Test_Synapse.py
