@@ -128,13 +128,15 @@ python Test_Synapse.py
 If you find this work useful, please cite our paper:
 
 ```bibtex
-@article{wang2025dlkunet,
-  title={DLKUNet: Lightweight and Efficient Network with Depthwise Large Kernel for Multi-Organ Segmentation},
-  author={Your Name and Others},
-  journal={IMA Journal of Applied Mathematics},
+@article{zhu2025dlkunet,
+  title={DLKUNet: A Lightweight and Efficient Network With Depthwise Large Kernel for Medical Image Segmentation},
+  author={Zhu, Junan and Tang, Zhizhe and Ma, Ping and Liang, Zheng and Wang, Chuanjian},
+  journal={International Journal of Imaging Systems and Technology},
+  volume={35},
+  number={1},
+  pages={e70035},
   year={2025},
-  publisher={Wiley},
-  doi={10.1002/ima.70035}
+  publisher={Wiley Online Library}
 }
 ```
 
