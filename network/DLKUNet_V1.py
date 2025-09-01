@@ -1,7 +1,8 @@
 """
-basic network architecture for DLKUNet
+basic network architecture for DLKUNet based on U-Net
 Author: ZZTang
 """
+
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
@@ -89,7 +90,6 @@ class Up(nn.Module):
         x = torch.cat([x2, x1], dim=1)
         return self.conv(x)
 
-
 class OutConv(nn.Module):
     def __init__(self, in_channels, out_channels):
         super(OutConv, self).__init__()
@@ -136,7 +136,7 @@ if __name__ == "__main__":
         print("Using CPU")
 
     model = UNet(n_channels=1, n_classes=9, use_LKA=False).to(device)
-    input_tensor = torch.randn(3, 1, 224, 224).to(device)
+    input_tensor = torch.randn(1, 1, 224, 224).to(device)
     print("Input shape:", input_tensor.shape)
     output = model(input_tensor)
     print("Output shape:", output.shape)

@@ -1,11 +1,11 @@
 # DLKUNet: Lightweight and Efficient Network with Depthwise Large Kernel for Multi-Organ Segmentation
 
 [![Paper](https://img.shields.io/badge/Paper-Wiley-blue)](https://onlinelibrary.wiley.com/doi/abs/10.1002/ima.70035)
-[![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
+[![License](https://img.shields.io/badge/License-GPL3-green.svg)](LICENSE)
 
 Accurate multi-organ segmentation is crucial in computer-aided diagnosis, surgical navigation, and radiotherapy. This repository provides the official implementation of **DLKUNet**, a lightweight and efficient deep learning framework for medical image segmentation.
 
-Attention: this repository is still building and maybe miss some files, we will upload more essential file in future.
+**Attention**: this repository is still building and maybe miss some files, we will upload more essential file in future.
 
 ---
 
@@ -24,24 +24,38 @@ Attention: this repository is still building and maybe miss some files, we will 
 
   * **DLKUNet-L** achieves **13.89 mm HD95**, with only **65% parameters** of Swin-Unet.
 
+![SynapseResult](pics/image.png)
+
 * On **ACDC dataset**:
 
   * **DLKUNet-S** achieves **91.71% Dice** using only **4.5% parameters** of Swin-Unet.
   * **DLKUNet-M** achieves **91.74% Dice** using only **16.52% parameters** of Swin-Unet.
 
+![ACDCResult](pics/image2.png)
+
 These results demonstrate DLKUNet’s superior balance of **accuracy, efficiency, and practicality**.
 
+**BTW**,I also opensource about how to generate the picture like this.
+here is my ([code](https://github.com/University-Pro/Visualization_Medical_Images))
 ---
 
 ## 📂 Repository Structure
 
 ```
 DLKUNet/
-├── network/           # Network architectures
-├── datasets/         # put ACDC and Synapse data into this folder
+├── network/           # Network architectures, you can put you own network in this folder
+├── datasets/          # put ACDC and Synapse data into this folder
+  |── Synapse/
+    |── data/
+    |── train.list
+    |── test.list
+  |── ACDC/
+    |── data/
+    |── train.list
+    |── test.list         
 ├── Dataloader_ACDC          # Dataloader of ACDC
 ├── Dataloader_Synapse  # Dataloader of Synapse
-├── LogProcess.py   # Logging process file 
+├── LogProcess.py   # Logging process file able to choose the best result from logging file
 ├── requirements.txt  # pypi file
 ├── Test_ACDC.py           # Test ACDC dataset
 ├── Test_Synapse.py        # Test Synapse dataset
@@ -57,21 +71,17 @@ DLKUNet/
 ### 1. ACDC datasets
 You can download the dataset from the Automated Cardiac Diagnosis Challenge(ACDC) offical website or other paper's repositories.
 
-```bash
-https://www.creatis.insa-lyon.fr/Challenge/acdc/databases.html
-```
+[ACDC Dataset Download Link](https://www.creatis.insa-lyon.fr/Challenge/acdc/databases.html)
 
-after download, put the data into ./datasets/ACDC folder.
+after download, put the data into ./datasets/ACDC/data folder.
 
 ### 2. Synapse dataset
 
 You can download the dataset from the offical website or other paper's repositories.
 
-```bash
+[Synapse Dataset Download Link](https://www.synapse.org/#!Synapse:syn3193805/wiki/217789)
 
-```
-
-after download, put the data into ./datasets/Synapse folder.
+after download, put the data into ./datasets/Synapse/data folder.
 
 ## 🚀 Getting Started
 
@@ -94,6 +104,13 @@ pip install -r requirements.txt
 
 ```bash
 python Train_Synapse.py
+```
+
+I developed this code using Data Parallel (DP) in PyTorch, which means you can use multiple GPUs to reduce training time.
+if you need more option, please check the args in Training file, or using:
+
+```bash
+python Train_Synapse.py -h
 ```
 
 ### 4. Test
@@ -130,4 +147,4 @@ If you find this work useful, please cite our paper:
 
 ## 📜 License
 
-This project is released under the [MIT License](LICENSE).
+This project is released under the [GPL3 License](LICENSE).
