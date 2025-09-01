@@ -11,6 +11,8 @@ Accurate multi-organ segmentation is crucial in computer-aided diagnosis, surgic
 
 ## 🔥 Highlights
 
+![Image](pics/image3.png)
+
 * **Lightweight & Efficient**: Uses depthwise large kernel convolutions for effective multi-scale feature extraction.
 * **Flexible Models**: Provides **DLKUNet-S**, **DLKUNet-M**, and **DLKUNet-L** for different trade-offs between accuracy and speed.
 * **Novel Training Strategy**: Designed to work seamlessly with the proposed architecture to boost performance.
