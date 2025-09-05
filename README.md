@@ -75,7 +75,7 @@ You can download the dataset from the Automated Cardiac Diagnosis Challenge(ACDC
 
 [ACDC Dataset Download Link](https://www.creatis.insa-lyon.fr/Challenge/acdc/databases.html)
 
-after download, put the data into ./datasets/ACDC/data folder.
+after download, put the data into `./datasets/ACDC/data` folder.
 
 ### 2. Synapse dataset
 
@@ -83,7 +83,7 @@ You can download the dataset from the offical website or other paper's repositor
 
 [Synapse Dataset Download Link](https://www.synapse.org/#!Synapse:syn3193805/wiki/217789)
 
-after download, put the data into ./datasets/Synapse/data folder.
+after download, put the data into `./datasets/Synapse/data` folder.
 
 ## 🚀 Getting Started
 
